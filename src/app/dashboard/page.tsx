@@ -129,6 +129,19 @@ export default function DashboardPage() {
   const summary = data?.summary;
   const list = data?.list;
 
+  // Only offer exercises that belong to the selected muscle group (if any).
+  const exerciseOptions =
+    options?.exercises.filter((e) => !filters.muscle || e.muscleGroup === filters.muscle) ?? [];
+
+  const onMuscleChange = (v: string) => {
+    const muscle = v === ALL ? null : v;
+    const changes: Record<string, string | null> = { muscle };
+    // Drop a selected exercise that isn't in the new muscle group, so the two filters never conflict.
+    const current = options?.exercises.find((e) => e.id === filters.exercise);
+    if (muscle && current && current.muscleGroup !== muscle) changes.exercise = null;
+    update(changes);
+  };
+
   const stats = summary && [
     { label: "Workouts", value: nf.format(summary.workouts) },
     { label: "Working sets", value: nf.format(summary.totalSets) },
@@ -166,7 +179,9 @@ export default function DashboardPage() {
                 onSelect={(r) =>
                   update({
                     from: r?.from ? format(r.from, "yyyy-MM-dd") : null,
-                    to: r?.to ? format(r.to, "yyyy-MM-dd") : null,
+                    // A first click has no end yet; treat it as a single-day range so the
+                    // filter applies immediately instead of meaning "from this date onward".
+                    to: r?.to || r?.from ? format((r.to ?? r.from)!, "yyyy-MM-dd") : null,
                     preset: null,
                   })
                 }
@@ -190,7 +205,7 @@ export default function DashboardPage() {
             onValueChange={(v) => update({ exercise: v === ALL ? null : v })}
             items={[
               { value: ALL, label: "All exercises" },
-              ...(options?.exercises.map((e) => ({ value: e.id, label: e.name })) ?? []),
+              ...exerciseOptions.map((e) => ({ value: e.id, label: e.name })),
             ]}
           >
             <SelectTrigger className="w-48" aria-label="Exercise">
@@ -198,7 +213,7 @@ export default function DashboardPage() {
             </SelectTrigger>
             <SelectContent className="bg-background">
               <SelectItem value={ALL}>All exercises</SelectItem>
-              {options?.exercises.map((e) => (
+              {exerciseOptions.map((e) => (
                 <SelectItem key={e.id} value={e.id}>
                   {e.name}
                 </SelectItem>
@@ -208,7 +223,7 @@ export default function DashboardPage() {
 
           <Select
             value={filters.muscle ?? ALL}
-            onValueChange={(v) => update({ muscle: v === ALL ? null : v })}
+            onValueChange={(v) => onMuscleChange(v as string)}
             items={[
               { value: ALL, label: "All muscle groups" },
               ...(options?.muscleGroups.map((m) => ({ value: m, label: m })) ?? []),

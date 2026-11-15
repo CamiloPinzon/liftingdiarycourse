@@ -196,5 +196,5 @@ export async function getFilterOptions(userId: string) {
     .orderBy(asc(exercises.name));
 
   const muscleGroups = [...new Set(list.map((e) => e.muscleGroup).filter((m): m is string => !!m))].sort();
-  return { exercises: list.map(({ id, name }) => ({ id, name })), muscleGroups };
+  return { exercises: list, muscleGroups };
 }
