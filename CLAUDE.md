@@ -14,6 +14,10 @@ No test framework is configured yet.
 
 Fresh Create Next App scaffold (Next.js 16.4.6, React 19.3, Tailwind CSS 4 via `@tailwindcss/turbopack`, TypeScript). Uses the App Router under `src/app/` (`layout.tsx`, `page.tsx`, `globals.css`). The `@/*` import alias maps to `src/*`.
 
+## UI standards
+
+Read `docs/ui.md` before writing any UI code. Only shadcn/ui components may be used; custom components are NOT permitted.
+
 ## Next.js version caveat
 
 This Next.js version has breaking changes relative to common training data. Per `AGENTS.md`, read the relevant guide in `node_modules/next/dist/docs/` (`01-app` for App Router) before writing any code, and heed deprecation notices.
