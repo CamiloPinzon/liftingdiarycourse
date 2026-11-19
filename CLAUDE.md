@@ -18,6 +18,10 @@ Fresh Create Next App scaffold (Next.js 16.4.6, React 19.3, Tailwind CSS 4 via `
 
 Read `docs/ui.md` before writing any UI code. Only shadcn/ui components may be used; custom components are NOT permitted.
 
+## Data fetching standards
+
+Read `docs/fetching-data.md` before writing any code that reads data. All data is fetched in Server Components via Drizzle helpers in `src/data/` (no raw SQL, no route handlers or client-side fetching), and users may only access their own data.
+
 ## Next.js version caveat
 
 This Next.js version has breaking changes relative to common training data. Per `AGENTS.md`, read the relevant guide in `node_modules/next/dist/docs/` (`01-app` for App Router) before writing any code, and heed deprecation notices.

@@ -28,6 +28,7 @@ Every visible UI element (buttons, inputs, cards, dialogs, tables, selects, cale
 - Layout and structure with plain semantic elements (`<main>`, `<section>`, `<div>`) styled with Tailwind utilities. These hold shadcn components. They do not replace them.
 - Typography with plain elements (`<h1>`, `<p>`) styled with Tailwind utilities, where shadcn has no equivalent.
 - Next.js file conventions (`page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx`), which are routes and not custom components.
+- A route-local `"use client"` file next to a page (e.g. `src/app/dashboard/date-picker.tsx`) when the page needs browser interactivity a Server Component can't provide. It may only compose shadcn components, must not be reused across routes, and must never fetch data (see `docs/fetching-data.md`).
 
 ## Styling
 

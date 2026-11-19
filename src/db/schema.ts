@@ -120,6 +120,7 @@ export const relations = defineRelations(
       exercise: r.one.exercises({
         from: r.workoutExercises.exerciseId,
         to: r.exercises.id,
+        optional: false, // exercise_id is NOT NULL with an FK
       }),
       sets: r.many.sets({
         from: r.workoutExercises.id,
