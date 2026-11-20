@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
+import { io } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { TZDate } from "@date-fns/tz";
@@ -49,8 +50,15 @@ async function DashboardContent({ searchParams }: { searchParams: SearchParams }
   const { userId } = await auth();
   if (!userId) redirect("/");
 
-  const timeZone = parseTimeZone((await cookies()).get(TZ_COOKIE)?.value);
-  const day = parseDay((await searchParams).date, timeZone);
+  const tzCookie = (await cookies()).get(TZ_COOKIE)?.value;
+  const { date } = await searchParams;
+  // Partial Prefetching can resolve cookies/searchParams inside the prerendered
+  // App Shell, so they aren't a suspension point here. io() is: everything below
+  // (which reads Date.now() for "today") is deferred to request time.
+  await io();
+
+  const timeZone = parseTimeZone(tzCookie);
+  const day = parseDay(date, timeZone);
   const workouts = await getWorkoutsForDate(day, timeZone);
   // Show times in the user's zone too, not the server's.
   const time = (d: Date) => format(new TZDate(d, timeZone), "p");
@@ -66,8 +74,7 @@ async function DashboardContent({ searchParams }: { searchParams: SearchParams }
           <EmptyHeader>
             <EmptyTitle>No workouts</EmptyTitle>
             <EmptyDescription>
-              You didn&apos;t log any workouts on {format(parseISO(day), "PPP")}.
-            </EmptyDescription>
+              You didn&apos;t log any workouts on {format(parseISO(day), "PPP")}.            </EmptyDescription>
           </EmptyHeader>
         </Empty>
       ) : (
